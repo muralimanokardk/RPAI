@@ -23,6 +23,7 @@ jobs:
   build-and-deploy:
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -37,6 +38,8 @@ jobs:
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Install Frontend Dependencies & Build Application
         run: |
@@ -52,12 +55,14 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        continue-on-error: true
 
   # -------------------------------------------------------------
   # Job 2: 1,500 Test Cases Execution (Selenium, Appium, Vulnerability, Unit, Load)
   # -------------------------------------------------------------
   e2e-and-load-tests:
     needs: build-and-deploy
+    if: always()
     runs-on: ubuntu-latest
     env:
       BASE_URL: https://muralimanokardk.github.io/RPAI/

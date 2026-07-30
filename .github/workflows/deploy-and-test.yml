@@ -23,10 +23,9 @@ jobs:
   build-and-deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Stage 1: Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js Environment
@@ -36,7 +35,10 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Stage 2 & 3: Install Frontend Dependencies & Build Application
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install Frontend Dependencies & Build Application
         run: |
           cd frontend
           npm ci
@@ -47,7 +49,7 @@ jobs:
         with:
           path: 'frontend/dist'
 
-      - name: Stage 4: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
 
@@ -61,7 +63,7 @@ jobs:
       BASE_URL: https://muralimanokardk.github.io/RPAI/
       HEADLESS: "true"
     steps:
-      - name: Stage 1: Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref || github.ref_name }}
@@ -73,7 +75,7 @@ jobs:
           cache: 'pip'
           cache-dependency-path: automation/requirements.txt
 
-      - name: Stage 2: Install Test Automation Dependencies & Tools
+      - name: Install Test Automation Dependencies & Tools
         run: |
           sudo apt-get update
           sudo apt-get install -y wget curl unzip google-chrome-stable
@@ -88,11 +90,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y k6
 
-      - name: Stage 5 - 9: Execute Master 1,500 Test Cases Suite & Report Generation
+      - name: Execute Master 1,500 Test Cases Suite & Report Generation
         run: |
           python automation/run_1500_tests.py
 
-      - name: Stage 10: Commit Updated Excel Reports to /test-results/latest/
+      - name: Commit Updated Excel Reports to /test-results/latest/
         if: always()
         run: |
           git config --global user.name "github-actions[bot]"
@@ -105,7 +107,7 @@ jobs:
             git push origin HEAD:${{ github.head_ref || github.ref_name }}
           fi
 
-      - name: Stage 11: Upload All 1,500 Test Report Artifacts (30-day retention)
+      - name: Upload All 1,500 Test Report Artifacts (30-day retention)
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -115,7 +117,7 @@ jobs:
             test-results/latest/
           retention-days: 30
 
-      - name: Stage 12: Publish GitHub Actions Run Summary
+      - name: Publish GitHub Actions Run Summary
         if: always()
         run: |
           python automation/utils/github_summary.py

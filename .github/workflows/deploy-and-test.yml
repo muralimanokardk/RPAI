@@ -31,7 +31,7 @@ jobs:
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
@@ -41,7 +41,7 @@ jobs:
       - name: Install Frontend Dependencies & Build Application
         run: |
           cd frontend
-          npm ci
+          npm install
           VITE_BASE_URL=/RPAI/ npm run build
 
       - name: Upload GitHub Pages Artifact

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from app.core.db import get_db
 from app.api.v1.auth import get_current_user
-from app.models.models import User, Paper, Subscription, Citation, Report, Document
+from app.models.models import User, Paper, Subscription, Citation, Report, Document, StudentVerification
 from app.schemas.schemas import PaperCreate, PaperResponse, PaperDetailResponse
 from app.tasks.tasks import generate_paper_task
 from app.services.ocr_service import ocr_service
@@ -21,6 +21,15 @@ def create_paper(
     if not sub:
         raise HTTPException(status_code=400, detail="No active subscription found")
     
+    # Enforce Student ID upload verification gating for student tier
+    if current_user.plan_tier == "student":
+        verification = db.query(StudentVerification).filter(StudentVerification.user_id == current_user.id).first()
+        if not verification:
+            raise HTTPException(
+                status_code=403,
+                detail="Student ID verification required. Please upload your student ID card in Onboarding before generating papers."
+            )
+
     if sub.status != "active" or sub.generations_used >= sub.generations_included:
         raise HTTPException(
             status_code=403,

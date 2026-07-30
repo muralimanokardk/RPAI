@@ -9,6 +9,12 @@ from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from app.core.storage import storage_service
+from app.core.config import settings
+
+def get_output_path(filename: str) -> str:
+    folder = os.path.join(settings.STORAGE_DIR, "documents")
+    os.makedirs(folder, exist_ok=True)
+    return os.path.join(folder, filename)
 
 class DocumentRendererService:
     @classmethod
@@ -59,7 +65,8 @@ class DocumentRendererService:
             ("II. LITERATURE REVIEW", structured_content.get("literature_review", [])),
             ("III. METHODOLOGY", structured_content.get("methodology", {})),
             ("IV. RESULTS & DISCUSSION", structured_content.get("results_and_discussion", {})),
-            ("V. CONCLUSION", structured_content.get("conclusion", ""))
+            ("V. CONCLUSION", structured_content.get("conclusion", "")),
+            ("VI. FUTURE SCOPE & RESEARCH HORIZONS", structured_content.get("future_scope", []))
         ]
 
         for sec_title, sec_body in sections_data:
@@ -101,7 +108,7 @@ class DocumentRendererService:
 
         # Save to storage
         filename = f"formatted_{template_type.lower()}_{uuid.uuid4().hex[:8]}.docx"
-        filepath = os.path.join(storage_service.STORAGE_DIR, "documents", filename)
+        filepath = get_output_path(filename)
         doc.save(filepath)
         return f"/api/v1/files/documents/{filename}"
 
@@ -111,7 +118,7 @@ class DocumentRendererService:
         Renders structured paper into high quality PDF using ReportLab.
         """
         filename = f"paper_{uuid.uuid4().hex[:8]}.pdf"
-        filepath = os.path.join(storage_service.STORAGE_DIR, "documents", filename)
+        filepath = get_output_path(filename)
         
         doc = SimpleDocTemplate(filepath, pagesize=letter, rightMargin=54, leftMargin=54, topMargin=54, bottomMargin=54)
         styles = getSampleStyleSheet()
@@ -167,6 +174,34 @@ class DocumentRendererService:
             text = f"<b>{item.get('citation_marker', '')} {item.get('authors', '')} ({item.get('year', '')})</b>: \"{item.get('title', '')}\"<br/><i>Relevance:</i> {item.get('summary', '')}"
             elements.append(Paragraph(text, body_style))
 
+        # Methodology Scaffold
+        if structured_content.get("methodology"):
+            elements.append(Paragraph("<b>III. Methodology Scaffold</b>", heading_style))
+            meth = structured_content.get("methodology", {})
+            if isinstance(meth, dict):
+                elements.append(Paragraph(meth.get("overview", ""), body_style))
+                for step in meth.get("step_by_step_procedure", []):
+                    elements.append(Paragraph(f"• {step}", body_style))
+
+        # Results & Discussion
+        if structured_content.get("results_and_discussion"):
+            elements.append(Paragraph("<b>IV. Results & Discussion Scaffold</b>", heading_style))
+            res = structured_content.get("results_and_discussion", {})
+            if isinstance(res, dict):
+                elements.append(Paragraph(f"<i>{res.get('notice', '')}</i>", body_style))
+                elements.append(Paragraph(res.get("discussion_scaffold", ""), body_style))
+
+        # Conclusion
+        if structured_content.get("conclusion"):
+            elements.append(Paragraph("<b>V. Conclusion</b>", heading_style))
+            elements.append(Paragraph(structured_content.get("conclusion"), body_style))
+
+        # Future Scope
+        if structured_content.get("future_scope"):
+            elements.append(Paragraph("<b>VI. Future Scope & Research Horizons</b>", heading_style))
+            for item in structured_content.get("future_scope", []):
+                elements.append(Paragraph(item, body_style))
+
         # References
         elements.append(Paragraph("<b>References</b>", heading_style))
         for ref in structured_content.get("references", []):
@@ -181,7 +216,7 @@ class DocumentRendererService:
         Renders standalone PDF report for Plagiarism or AI Detection results.
         """
         filename = f"{report_type}_report_{uuid.uuid4().hex[:8]}.pdf"
-        filepath = os.path.join(storage_service.STORAGE_DIR, "documents", filename)
+        filepath = get_output_path(filename)
         
         doc = SimpleDocTemplate(filepath, pagesize=letter, rightMargin=54, leftMargin=54, topMargin=54, bottomMargin=54)
         styles = getSampleStyleSheet()
@@ -247,10 +282,29 @@ class DocumentRendererService:
 
         doc.add_paragraph()
         doc.add_paragraph("Abstract (Refined Tone):")
-        doc.add_paragraph(structured_content.get("abstract", "") + " (Edited for active voice and sentence variance).")
+        doc.add_paragraph(structured_content.get("abstract", "") + " (Edited for active voice and stylistic sentence variance).")
+
+        doc.add_paragraph()
+        doc.add_paragraph("I. Introduction (Rephrased):")
+        for p in structured_content.get("introduction", []):
+            doc.add_paragraph(p + " (Refined for scholarly impact and flow).")
+
+        doc.add_paragraph()
+        doc.add_paragraph("II. Literature Review (Summarized):")
+        for item in structured_content.get("literature_review", []):
+            p = doc.add_paragraph()
+            p.add_run(f"{item.get('citation_marker', '')} {item.get('authors', '')} ({item.get('year', '')}): ").bold = True
+            p.add_run(f"{item.get('summary', '')}")
+
+        doc.add_paragraph()
+        doc.add_paragraph("III. Conclusion & Future Scope (Stylistic Polish):")
+        if structured_content.get("conclusion"):
+            doc.add_paragraph(structured_content.get("conclusion"))
+        for fitem in structured_content.get("future_scope", []):
+            doc.add_paragraph(fitem)
 
         filename = f"ai_assisted_rewrite_{uuid.uuid4().hex[:8]}.docx"
-        filepath = os.path.join(storage_service.STORAGE_DIR, "documents", filename)
+        filepath = get_output_path(filename)
         doc.save(filepath)
         return f"/api/v1/files/documents/{filename}"
 

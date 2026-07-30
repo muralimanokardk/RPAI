@@ -27,6 +27,10 @@ export const authApi = {
     const resp = await api.post('/auth/login', data);
     return resp.data;
   },
+  googleOAuth: async (data: { email: string; name: string; token?: string }) => {
+    const resp = await api.post('/auth/google', data);
+    return resp.data;
+  },
   forgotPassword: async (email: string) => {
     const resp = await api.post('/auth/forgot-password', { email });
     return resp.data;

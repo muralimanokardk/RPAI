@@ -1,0 +1,121 @@
+name: RPAI CI/CD Pipeline - Deployment, 1500 E2E & Load Testing
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # -------------------------------------------------------------
+  # Job 1: Build Application & Deploy to GitHub Pages
+  # -------------------------------------------------------------
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stage 1: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Stage 2 & 3: Install Frontend Dependencies & Build Application
+        run: |
+          cd frontend
+          npm ci
+          VITE_BASE_URL=/RPAI/ npm run build
+
+      - name: Upload GitHub Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'frontend/dist'
+
+      - name: Stage 4: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # -------------------------------------------------------------
+  # Job 2: 1,500 Test Cases Execution (Selenium, Appium, Vulnerability, Unit, Load)
+  # -------------------------------------------------------------
+  e2e-and-load-tests:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://muralimanokardk.github.io/RPAI/
+      HEADLESS: "true"
+    steps:
+      - name: Stage 1: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: automation/requirements.txt
+
+      - name: Stage 2: Install Test Automation Dependencies & Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget curl unzip google-chrome-stable
+          python -m pip install --upgrade pip
+          pip install -r automation/requirements.txt
+
+      - name: Install k6 Load Testing Tool
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install -y k6
+
+      - name: Stage 5 - 9: Execute Master 1,500 Test Cases Suite & Report Generation
+        run: |
+          python automation/run_1500_tests.py
+
+      - name: Stage 10: Commit Updated Excel Reports to /test-results/latest/
+        if: always()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add test-results/latest/*.xlsx test-results/latest/*.json test-results/latest/*.html
+          if git diff --staged --quiet; then
+            echo "No report changes to commit."
+          else
+            git commit -m "chore(ci): update 1500 test results and excel reports [skip ci]"
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
+          fi
+
+      - name: Stage 11: Upload All 1,500 Test Report Artifacts (30-day retention)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpai-1500-test-reports-artifact
+          path: |
+            automation/reports/
+            test-results/latest/
+          retention-days: 30
+
+      - name: Stage 12: Publish GitHub Actions Run Summary
+        if: always()
+        run: |
+          python automation/utils/github_summary.py

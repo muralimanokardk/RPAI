@@ -1,12 +1,43 @@
 import uuid
-from datetime import datetime, timedelta
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.core.db import get_db
 from app.core.security import verify_password, get_password_hash, create_access_token, verify_token
 from app.models.models import User, Subscription
-from app.schemas.schemas import UserCreate, UserLogin, UserResponse, Token, ForgotPasswordRequest, ResetPasswordRequest
+from app.schemas.schemas import UserCreate, UserLogin, UserResponse, Token, ForgotPasswordRequest, ResetPasswordRequest, GoogleOAuthRequest
 from app.core.config import settings
+
+security_scheme = HTTPBearer(auto_error=False)
+
+def get_current_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
+    db: Session = Depends(get_db)
+) -> User:
+    if not credentials or not credentials.credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication credentials were not provided",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    token = credentials.credentials
+    user_id = verify_token(token)
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -54,6 +85,34 @@ def login(user_in: UserLogin, db: Session = Depends(get_db)):
     access_token = create_access_token(user.id)
     return Token(access_token=access_token, token_type="bearer", user=UserResponse.model_validate(user))
 
+@router.post("/google", response_model=Token)
+def google_oauth(req: GoogleOAuthRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == req.email).first()
+    if not user:
+        user = User(
+            email=req.email,
+            name=req.name,
+            auth_provider="google",
+            plan_tier="standard",
+            is_verified=True
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+        sub = Subscription(
+            user_id=user.id,
+            plan="standard_plan",
+            status="active",
+            generations_used=0,
+            generations_included=settings.STANDARD_FREE_GENERATIONS
+        )
+        db.add(sub)
+        db.commit()
+
+    access_token = create_access_token(user.id)
+    return Token(access_token=access_token, token_type="bearer", user=UserResponse.model_validate(user))
+
 @router.post("/forgot-password")
 def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == req.email).first()
@@ -88,14 +147,7 @@ def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db)):
 
     return {"message": "Password updated successfully"}
 
-def get_current_user(token: str = Depends(verify_token), db: Session = Depends(get_db)) -> User:
-    if not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-    user = db.query(User).filter(User.id == token).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
-    return user
-
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
     return UserResponse.model_validate(current_user)
+

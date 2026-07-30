@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     RAZORPAY_KEY_SECRET: str = os.getenv("RAZORPAY_KEY_SECRET", "rzp_test_samplesecret123")
     RAZORPAY_WEBHOOK_SECRET: str = os.getenv("RAZORPAY_WEBHOOK_SECRET", "whsec_sample123")
     
+    # OAuth Credentials
+    GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID", "your-google-oauth-client-id.apps.googleusercontent.com")
+    APPLE_CLIENT_ID: str = os.getenv("APPLE_CLIENT_ID", "com.researchprepai.auth.client")
+
     # Storage
     STORAGE_DIR: str = os.getenv("STORAGE_DIR", "./uploads")
     S3_ENDPOINT_URL: Optional[str] = os.getenv("S3_ENDPOINT_URL", None)

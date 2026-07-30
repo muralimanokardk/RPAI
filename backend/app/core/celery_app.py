@@ -4,7 +4,8 @@ from app.core.config import settings
 celery_app = Celery(
     "researchprep_tasks",
     broker=settings.REDIS_URL,
-    backend=settings.REDIS_URL
+    backend=settings.REDIS_URL,
+    include=["app.tasks.tasks"]
 )
 
 celery_app.conf.update(

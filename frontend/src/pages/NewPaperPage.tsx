@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
 import { papersApi } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import {
   Type,
   Mic,
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 
 export const NewPaperPage: React.FC = () => {
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const initialTopic = searchParams.get('topic') || '';
 
@@ -92,6 +94,12 @@ export const NewPaperPage: React.FC = () => {
       return;
     }
 
+    if (user?.plan_tier === 'student' && !user?.is_verified) {
+      alert("Student ID verification required! Please upload your Student ID Card to proceed on the Student Plan.");
+      navigate('/onboarding/student-verification');
+      return;
+    }
+
     setLoading(true);
     try {
       const paper = await papersApi.create({
@@ -103,7 +111,12 @@ export const NewPaperPage: React.FC = () => {
       });
       navigate(`/tracker/${paper.id}`);
     } catch (err: any) {
-      alert(err.response?.data?.detail || "Failed to start generation pipeline.");
+      if (err.response?.status === 403 && err.response?.data?.detail?.includes("Student ID")) {
+        alert(err.response.data.detail);
+        navigate('/onboarding/student-verification');
+      } else {
+        alert(err.response?.data?.detail || "Failed to start generation pipeline.");
+      }
     } finally {
       setLoading(false);
     }
@@ -115,6 +128,21 @@ export const NewPaperPage: React.FC = () => {
 
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-6xl mx-auto space-y-8">
+          {user?.plan_tier === 'student' && !user?.is_verified && (
+            <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl flex items-center justify-between text-amber-900 text-xs font-semibold">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                <span>Student ID Upload Required: Please upload your student ID card to activate student plan benefits.</span>
+              </div>
+              <button
+                onClick={() => navigate('/onboarding/student-verification')}
+                className="bg-amber-600 text-white px-3 py-1.5 rounded-xl font-bold hover:bg-amber-700 transition-colors"
+              >
+                Upload ID Card
+              </button>
+            </div>
+          )}
+
           {/* Back & Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

@@ -97,10 +97,9 @@ def generate_paper_task(paper_id: str):
         db.add(Document(paper_id=paper.id, document_type="plagiarism_report", file_format="pdf", file_url=plag_pdf_url))
         db.add(Document(paper_id=paper.id, document_type="ai_detection_report", file_format="pdf", file_url=ai_pdf_url))
 
-        # Deliverable 4: AI Assisted Rewrite (if AI % > 11%)
-        if integrity_res["requires_rewrite"]:
-            rewrite_url = document_renderer_service.render_ai_rewrite_docx(structured_content)
-            db.add(Document(paper_id=paper.id, document_type="rewrite", file_format="docx", file_url=rewrite_url))
+        # Deliverable 4: AI Assisted Rewrite Drafting Aid
+        rewrite_url = document_renderer_service.render_ai_rewrite_docx(structured_content)
+        db.add(Document(paper_id=paper.id, document_type="rewrite", file_format="docx", file_url=rewrite_url))
 
         # Update Subscription Usage
         sub = db.query(Subscription).filter(Subscription.user_id == paper.user_id, Subscription.status == "active").first()

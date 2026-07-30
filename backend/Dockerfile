@@ -10,10 +10,18 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Create non-root user for container security
+RUN useradd -m -u 1000 appuser && \
+    mkdir -p /app/uploads && \
+    chown -R appuser:appuser /app
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+RUN chown -R appuser:appuser /app
+
+USER appuser
 
 EXPOSE 8000
 

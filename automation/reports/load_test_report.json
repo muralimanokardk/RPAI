@@ -1,0 +1,13 @@
+{
+  "virtual_users": 100,
+  "duration": "60s",
+  "requests_per_sec": 145.2,
+  "min_response_time_ms": 32.5,
+  "avg_response_time_ms": 88.4,
+  "max_response_time_ms": 240.0,
+  "p95_response_time_ms": 165.0,
+  "error_rate_pct": 0.0,
+  "total_requests": 8712,
+  "status": "PASSED",
+  "timestamp": "2026-07-30T10:36:14Z"
+}

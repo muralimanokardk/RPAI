@@ -1,5 +1,5 @@
 export interface User {
-  id: str;
+  id: string;
   email: string;
   name: string;
   auth_provider: string;
@@ -86,6 +86,7 @@ export interface PaperDetail extends Paper {
     methodology: any;
     results_and_discussion: any;
     conclusion: string;
+    future_scope?: string[];
     references: Array<{
       index: number;
       marker: string;

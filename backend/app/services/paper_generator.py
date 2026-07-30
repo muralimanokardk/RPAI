@@ -105,13 +105,21 @@ class PaperGeneratorService:
 
         # 6. Conclusion
         conclusion = (
-            f"In this paper, we presented a comprehensive research framework for {topic}. "
-            f"By establishing a validated literature baseline and a standardized methodology protocol, "
-            f"this work facilitates reproducible empirical inquiry. Future work will focus on expanding "
-            f"the evaluation matrix to broader operational environments."
+            f"In this study, we presented a comprehensive structured research framework for {topic}. "
+            f"By synthesizing established literature and introducing a standardized methodology protocol, "
+            f"this research provides a foundation for systematic empirical evaluation and academic rigor. "
+            f"The comparative analysis establishes critical baseline performance criteria across key evaluation vectors."
         )
 
-        # 7. References (Only verified real citations)
+        # 7. Future Scope & Research Horizons
+        future_scope = [
+            f"1. Integration of advanced multi-modal learning architectures to evaluate {topic} across real-time streaming environments.",
+            f"2. Empirical validation across heterogeneous edge-computing infrastructure to measure scalability under network constraints.",
+            f"3. Expansion of ethical AI transparency and automated bias-auditing metrics for domain-specific compliance.",
+            f"4. Long-term longitudinal field studies to assess user adoption, cognitive load, and sustained operational impact."
+        ]
+
+        # 8. References (Only verified real citations)
         references = [
             {
                 "index": i + 1,
@@ -132,6 +140,7 @@ class PaperGeneratorService:
             "methodology": methodology,
             "results_and_discussion": results_and_discussion,
             "conclusion": conclusion,
+            "future_scope": future_scope,
             "references": references,
             "verified_citations": real_citations
         }

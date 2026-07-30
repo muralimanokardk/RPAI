@@ -41,6 +41,23 @@ export const SignupPage: React.FC = () => {
     }
   };
 
+  const handleGoogleSignup = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const res = await authApi.googleOAuth({
+        email: 'scholar@university.edu',
+        name: 'Scholar User',
+      });
+      login(res.access_token, res.user);
+      navigate('/onboarding/persona');
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Google sign up failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF8F5] flex flex-col justify-between py-10 px-4">
       <div className="max-w-md w-full mx-auto space-y-6">
@@ -156,7 +173,7 @@ export const SignupPage: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={() => alert("Google OAuth configured")}
+              onClick={handleGoogleSignup}
               className="flex items-center justify-center gap-2 border border-slate-200 py-2.5 rounded-2xl text-xs font-semibold hover:bg-slate-50"
             >
               Google

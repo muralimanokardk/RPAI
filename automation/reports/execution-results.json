@@ -16,7 +16,7 @@
       "expected_result": "Redirected to dashboard, token set",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 1.347,
+      "execution_time": 0.535,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -30,7 +30,7 @@
       "expected_result": "Error 'Invalid login credentials' shown",
       "actual_result": "Error message shown as expected",
       "status": "Passed",
-      "execution_time": 30.898,
+      "execution_time": 30.189,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -44,7 +44,7 @@
       "expected_result": "Error message shown",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.485,
+      "execution_time": 0.166,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -58,7 +58,7 @@
       "expected_result": "HTML5 browser validation triggered",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.576,
+      "execution_time": 0.202,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -72,7 +72,7 @@
       "expected_result": "HTML5 browser validation triggered",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 1.372,
+      "execution_time": 0.174,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -86,7 +86,7 @@
       "expected_result": "Email format error displayed",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 1.274,
+      "execution_time": 0.14,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -100,7 +100,7 @@
       "expected_result": "Redirected to Google OAuth or mock logged in",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 1.306,
+      "execution_time": 0.269,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -114,7 +114,7 @@
       "expected_result": "OAuth dialog/alert shown",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.792,
+      "execution_time": 0.379,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -128,7 +128,7 @@
       "expected_result": "Password toggles between dots and plain text",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.454,
+      "execution_time": 0.315,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -142,7 +142,7 @@
       "expected_result": "Navigated to /forgot-password",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.912,
+      "execution_time": 0.291,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -156,7 +156,7 @@
       "expected_result": "Navigated to /signup",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.605,
+      "execution_time": 0.368,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -170,7 +170,7 @@
       "expected_result": "Redirected to /onboarding/persona",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.983,
+      "execution_time": 0.343,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -184,7 +184,7 @@
       "expected_result": "Error 'Passwords do not match' displayed",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 1.571,
+      "execution_time": 0.362,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -198,7 +198,7 @@
       "expected_result": "Error 'You must agree to Research Ethics' displayed",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 1.932,
+      "execution_time": 0.496,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -212,7 +212,7 @@
       "expected_result": "Error 'User already exists' shown",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 3.36,
+      "execution_time": 0.298,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -226,7 +226,7 @@
       "expected_result": "Password length error displayed",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 1.499,
+      "execution_time": 0.295,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -240,7 +240,7 @@
       "expected_result": "Google OAuth triggered",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.559,
+      "execution_time": 0.272,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -254,7 +254,7 @@
       "expected_result": "Page title contains 'Research Prep AI'",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.91,
+      "execution_time": 0.344,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -268,7 +268,7 @@
       "expected_result": "Confirmation message 'Reset link sent' shown",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.704,
+      "execution_time": 0.111,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -282,7 +282,7 @@
       "expected_result": "Browser prevents form submit",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.954,
+      "execution_time": 0.24,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -296,7 +296,7 @@
       "expected_result": "Password updated successfully message",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 1.095,
+      "execution_time": 0.173,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -310,7 +310,7 @@
       "expected_result": "Error shown",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 1.783,
+      "execution_time": 0.116,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -324,7 +324,7 @@
       "expected_result": "Form submits automatically",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.837,
+      "execution_time": 0.145,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -338,7 +338,7 @@
       "expected_result": "Form submits automatically",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.312,
+      "execution_time": 0.143,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -352,7 +352,7 @@
       "expected_result": "Session cleared, redirected to /login",
       "actual_result": "Page rendered & login form functional",
       "status": "Passed",
-      "execution_time": 0.407,
+      "execution_time": 0.121,
       "failure_reason": "",
       "screenshot_ref": ""
     },
@@ -5898,6 +5898,6 @@
     "error_rate_pct": 0.0,
     "total_requests": 8712,
     "status": "PASSED",
-    "timestamp": "2026-07-30T10:36:14Z"
+    "timestamp": "2026-07-30T11:44:27Z"
   }
 }

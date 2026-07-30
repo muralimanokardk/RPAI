@@ -19,15 +19,15 @@ export default {
           800: '#312E81',
           900: '#1E1B4B',
         },
-        surface: '#F8F9FD',
-        card: '#FFFFFF',
+        surface: '#050811',
+        card: '#0F172A',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        'soft': '0 4px 20px -2px rgba(99, 91, 255, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04)',
-        'glow': '0 0 25px rgba(99, 91, 255, 0.25)',
+        'soft': '0 4px 20px -2px rgba(99, 91, 255, 0.25), 0 2px 6px -1px rgba(0, 0, 0, 0.5)',
+        'glow': '0 0 30px rgba(167, 139, 250, 0.35)',
       }
     },
   },
